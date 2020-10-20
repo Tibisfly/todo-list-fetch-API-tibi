@@ -8,7 +8,21 @@ import { checkPropTypes } from "prop-types";
 //create your first component
 export function Home() {
 	const [todo, setTodo] = useState(["elemento 1", "elemento 2"]);
-	const [value, setValue] = useState([" "]);
+	const [value, setValue] = useState("Wash my hands ");
+
+	function handleChange(event) {
+		setValue(event.target.value);
+		setValue(" ");
+	}
+
+	const handleKeyPress = event => {
+		if (event.key === "Enter") {
+			// const newTodo = todo;
+			// newTodo.push(value);
+			// setTodo(newTodo);
+			setTodo([...todo, value]);
+		}
+	};
 
 	return (
 		<div className="text-center mt-5">
@@ -18,12 +32,15 @@ export function Home() {
 					<div className="container">
 						<p>My value is {value}</p>
 						<input
-							onChange={event =>
-								setTodo(todo + setValue(event.target.value))
-							}
+							onChange={handleChange}
+							onKeyPress={handleKeyPress}
 						/>
 						<p>{todo}</p>
-                        
+						<ul>
+							{todo.map((value, index) => (
+								<li key={index}>{value}</li>
+							))}
+						</ul>
 						<br />
 					</div>
 				</div>
@@ -33,3 +50,9 @@ export function Home() {
 }
 
 // Nos hace falta añadir value en todo y que se agregue ese input cada vez que apretamos enter 	<ul>{todo.map(value)=>(<li>{value}</li>)}</ul>
+// se declara la variable const con un "value" que se cambia al aplicar "setValue", por eso se usa use state
+//setTodo(todo
+// en el handler no necesitas retornar nada, en ningun lado coloques return.
+// Los eventos se colocan sin return, se utilizan con handle<event>
+//useEffect está presente cuando hay efectos colaterales (se establece un valor), React busca dispararlo siempre, programación funcional. Efecto secundario: cada vez que cambias una variable SIEMPRE.
+// setTodo([...todo, value]); linea 18 a 21 javascript moderno
