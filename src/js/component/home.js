@@ -8,11 +8,10 @@ import { checkPropTypes } from "prop-types";
 //create your first component
 export function Home() {
 	const [todo, setTodo] = useState(["elemento 1", "elemento 2"]);
-	const [value, setValue] = useState("Wash my hands ");
+	const [value, setValue] = useState("");
 
 	function handleChange(event) {
 		setValue(event.target.value);
-		setValue(" ");
 	}
 
 	const handleKeyPress = event => {
@@ -21,6 +20,8 @@ export function Home() {
 			// newTodo.push(value);
 			// setTodo(newTodo);
 			setTodo([...todo, value]);
+			console.log("handleKeyPress");
+			setValue("");
 		}
 	};
 
@@ -34,8 +35,8 @@ export function Home() {
 						<input
 							onChange={handleChange}
 							onKeyPress={handleKeyPress}
+							value={value}
 						/>
-						<p>{todo}</p>
 						<ul>
 							{todo.map((value, index) => (
 								<li key={index}>{value}</li>
@@ -56,3 +57,4 @@ export function Home() {
 // Los eventos se colocan sin return, se utilizan con handle<event>
 //useEffect está presente cuando hay efectos colaterales (se establece un valor), React busca dispararlo siempre, programación funcional. Efecto secundario: cada vez que cambias una variable SIEMPRE.
 // setTodo([...todo, value]); linea 18 a 21 javascript moderno
+// falta el evento de eliminar
