@@ -15,7 +15,7 @@ export function Home() {
 	}
 
 	const handleKeyPress = event => {
-		if (event.key === "Enter") {
+		if (event.key === "Enter" && value != "") {
 			// const newTodo = todo;
 			// newTodo.push(value);
 			// setTodo(newTodo);
@@ -28,7 +28,7 @@ export function Home() {
 	return (
 		<div className="text-center mt-5">
 			<div className="row">
-				<div className="container-fluid">
+				<div className="col-md-12">
 					<h1 className="display-2">todos</h1>
 					<div className="container">
 						<p>My value is {value}</p>
