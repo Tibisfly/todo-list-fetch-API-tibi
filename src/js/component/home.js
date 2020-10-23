@@ -36,6 +36,7 @@ export function Home() {
 							onChange={handleChange}
 							onKeyPress={handleKeyPress}
 							value={value}
+							placeholder="What needs to be done?"
 						/>
 						<ul>
 							{todo.map((value, index) => (
