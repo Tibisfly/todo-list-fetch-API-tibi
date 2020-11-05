@@ -5,7 +5,6 @@ import rigoImage from "../../img/rigo-baby.jpg";
 import { useState, useEffect } from "react";
 import { checkPropTypes } from "prop-types";
 
-//create your first component
 export function Home() {
 	const [todo, setTodo] = useState(["elemento 1", "elemento 2"]);
 	const [value, setValue] = useState("");
@@ -27,10 +26,11 @@ export function Home() {
 
 	return (
 		<div className="text-center mt-5">
-			<div className="row">
+			<div className="row w-100">
 				<div className="col-md-12">
-					<h1 className="display-2">todos</h1>
-					<div className="container">
+					<h1 className="display-2">Tibis TO DO List</h1>
+
+					<div className="container form-group">
 						<p>My value is {value}</p>
 						<input
 							onChange={handleChange}
@@ -40,10 +40,22 @@ export function Home() {
 						/>
 						<ul>
 							{todo.map((value, index) => (
-								<li key={index}>{value}</li>
+								<li className="list-group-item" key={index}>
+									{value}
+								</li>
 							))}
 						</ul>
-						<br />
+						<div className="col-12 col-sm-6 col-md-9 text-center text-sm-left">
+							<button className="btn">
+								<i className="fas fa-pencil-alt mr-3" />
+							</button>
+
+							<button className="btn">
+								<i className="fas fa-trash-alt" />
+							</button>
+
+							<br />
+						</div>
 					</div>
 				</div>
 			</div>
