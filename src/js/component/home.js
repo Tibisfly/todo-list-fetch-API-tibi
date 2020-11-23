@@ -6,23 +6,31 @@ import { useState, useEffect } from "react";
 import { checkPropTypes } from "prop-types";
 
 export function Home() {
-	const [todo, setTodo] = useState(["elemento 1", "elemento 2"]);
-	const [value, setValue] = useState("");
+	const [todo, setTodo] = useState(["Make the bed", "Go to the gym"]);
+	const [inputValue, setInputValue] = useState("");
 
 	function handleChange(event) {
-		setValue(event.target.value);
+		setInputValue(event.target.value);
 	}
 
 	const handleKeyPress = event => {
-		if (event.key === "Enter" && value != "") {
+		if (event.key === "Enter" && inputValue != "") {
 			// const newTodo = todo;
 			// newTodo.push(value);
 			// setTodo(newTodo);
-			setTodo([...todo, value]);
+			setTodo([...todo, inputValue]);
 			console.log("handleKeyPress");
-			setValue("");
+			setInputValue("");
 		}
 	};
+
+	function deleteRow(index, event) {
+		// quiero borrar una tarea y quiero identificar qué tarea en específico quiero "borrar", también necesitamos imprimir el nuevo array, sin ese todo que borramos.
+		// for(let i=0; i<todo.length; i++) Victor me pregunta por qué lo quiero recorrer
+		let newTodo = [...todo]; //aquí copio mi array para utilizarlo con el splice más cómodo
+		let removed = newTodo.splice(index, 1); //nos devuelve un array de los elementos eliminados, me da el que eliminé
+		setTodo(newTodo); //se hace el setTodo del nuevo array, sino saldría el array antes del splice
+	}
 
 	return (
 		<div className="text-center mt-5">
@@ -30,32 +38,31 @@ export function Home() {
 				<div className="col-md-12">
 					<h1 className="display-2">Tibis TO DO List</h1>
 
-					<div className="container form-group">
-						<p>My value is {value}</p>
+					<div className="input container input-group mx-auto">
 						<input
 							onChange={handleChange}
 							onKeyPress={handleKeyPress}
-							value={value}
+							value={inputValue}
 							placeholder="What needs to be done?"
+							type="text"
+							className="form-control"
 						/>
+					</div>
+					<div className="list container">
 						<ul>
 							{todo.map((value, index) => (
 								<li className="list-group-item" key={index}>
 									{value}
+									<button
+										type="button"
+										onClick={event =>
+											deleteRow(index, event)
+										}>
+										<i className="fas fa-trash-alt" />
+									</button>
 								</li>
 							))}
 						</ul>
-						<div className="col-12 col-sm-6 col-md-9 text-center text-sm-left">
-							<button className="btn">
-								<i className="fas fa-pencil-alt mr-3" />
-							</button>
-
-							<button className="btn">
-								<i className="fas fa-trash-alt" />
-							</button>
-
-							<br />
-						</div>
 					</div>
 				</div>
 			</div>
