@@ -30,8 +30,19 @@ export function Home() {
 		let newTodo = [...todo]; //aquí copio mi array para utilizarlo con el splice más cómodo
 		let removed = newTodo.splice(index, 1); //nos devuelve un array de los elementos eliminados, me da el que eliminé
 		setTodo(newTodo); //se hace el setTodo del nuevo array, sino saldría el array antes del splice
-	}
-
+    }
+    
+    function getTodos(){
+        let requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+            };
+            fetch("https://assets.breatheco.de/apis/fake/todos/user/tibisfly2", requestOptions)
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error));
+    }
+    
 	return (
 		<div className="text-center mt-5">
 			<div className="row w-100">
