@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { checkPropTypes } from "prop-types";
 
 export function Home() {
-	const [todo, setTodo] = useState(["Make the bed", "Go to the gym"]);
+	const [todo, setTodo] = useState([]);
 	const [inputValue, setInputValue] = useState("");
 
 	function handleChange(event) {
@@ -30,19 +30,39 @@ export function Home() {
 		let newTodo = [...todo]; //aquí copio mi array para utilizarlo con el splice más cómodo
 		let removed = newTodo.splice(index, 1); //nos devuelve un array de los elementos eliminados, me da el que eliminé
 		setTodo(newTodo); //se hace el setTodo del nuevo array, sino saldría el array antes del splice
-    }
-    
-    function getTodos(){
-        let requestOptions = {
-            method: 'GET',
-            redirect: 'follow'
-            };
-            fetch("https://assets.breatheco.de/apis/fake/todos/user/tibisfly2", requestOptions)
-            .then(response => response.text())
-            .then(result => console.log(result))
-            .catch(error => console.log('error', error));
-    }
-    
+	}
+	// el useeffect lo necesito para el primer GET ALL (eso es lo que me va a traer los valores de la lista predeterminados o ya agregados)
+	useEffect(() => {
+		const endpoint =
+			"https://assets.breatheco.de/apis/fake/todos/user/tibisfly2";
+		const config = {
+			method: "GET"
+		};
+
+		fetch(endpoint, config)
+			.then(response => {
+				return response.json();
+			})
+			.then(json => {
+				setTodo(json.label);
+			});
+	}, []);
+	// fetch(endpoint).then(function(response) {
+	// 	return response.json()
+	// }).then(function(json) {
+	//     json.forEach((value) => {
+	//         console.log(value)
+	//     })
+	// });
+	// let requestOptions = {
+	//     method: 'GET',
+	//     redirect: 'follow'
+	//     };
+	//     fetch("https://assets.breatheco.de/apis/fake/todos/user/tibisfly2", requestOptions)
+	//     .then(response => response.text())
+	//     .then(result => console.log(result))
+	//     .catch(error => console.log('error', error));
+
 	return (
 		<div className="text-center mt-5">
 			<div className="row w-100">
