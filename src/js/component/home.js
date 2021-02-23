@@ -6,62 +6,114 @@ import { useState, useEffect } from "react";
 import { checkPropTypes } from "prop-types";
 
 export function Home() {
-	const [todo, setTodo] = useState([]);
-	const [inputValue, setInputValue] = useState("");
+	// const [todo, setTodo] = useState([]);
+	// const [inputValue, setInputValue] = useState("");
 
-	function handleChange(event) {
-		setInputValue(event.target.value);
-	}
+	// function handleChange(event) {
+	// 	setInputValue(event.target.value);
+	// }
 
-	const handleKeyPress = event => {
-		if (event.key === "Enter" && inputValue != "") {
-			// const newTodo = todo;
-			// newTodo.push(value);
-			// setTodo(newTodo);
-			setTodo([...todo, inputValue]);
-			console.log("handleKeyPress");
-			setInputValue("");
-		}
-	};
+	// const handleKeyPress = event => {
+	// 	if (event.key === "Enter" && inputValue != "") {
+	// 		// const newTodo = todo;
+	// 		// newTodo.push(value);
+	// 		// setTodo(newTodo);
+	// 		setTodo([...todo, inputValue]);
+	// 		console.log("handleKeyPress");
+	// 		setInputValue("");
+	// 	}
+	// };
 
-	function deleteRow(index, event) {
-		// quiero borrar una tarea y quiero identificar qué tarea en específico quiero "borrar", también necesitamos imprimir el nuevo array, sin ese todo que borramos.
-		// for(let i=0; i<todo.length; i++) Victor me pregunta por qué lo quiero recorrer
-		let newTodo = [...todo]; //aquí copio mi array para utilizarlo con el splice más cómodo
-		let removed = newTodo.splice(index, 1); //nos devuelve un array de los elementos eliminados, me da el que eliminé
-		setTodo(newTodo); //se hace el setTodo del nuevo array, sino saldría el array antes del splice
-	}
+	// function deleteRow(index, event) {
+	// quiero borrar una tarea y quiero identificar qué tarea en específico quiero "borrar", también necesitamos imprimir el nuevo array, sin ese todo que borramos.
+	// for(let i=0; i<todo.length; i++) Victor me pregunta por qué lo quiero recorrer
+	// 	let newTodo = [...todo]; //aquí copio mi array para utilizarlo con el splice más cómodo
+	// 	let removed = newTodo.splice(index, 1); //nos devuelve un array de los elementos eliminados, me da el que eliminé
+	// 	setTodo(newTodo); //se hace el setTodo del nuevo array, sino saldría el array antes del splice
+	// }
 	// el useeffect lo necesito para el primer GET ALL (eso es lo que me va a traer los valores de la lista predeterminados o ya agregados)
-	useEffect(() => {
-		const endpoint =
-			"https://assets.breatheco.de/apis/fake/todos/user/tibisfly2";
-		const config = {
-			method: "GET"
-		};
 
-		fetch(endpoint, config)
-			.then(response => {
-				return response.json();
+	const [todo, setTodo] = useState([]);
+	const toDoListUrl =
+		"https://assets.breatheco.de/apis/fake/todos/user/tibisfly2";
+
+	function addTodo(e) {
+		let input = document.querySelector("input").value;
+		if (e.key === "Enter") {
+			setTodo(todo => [...todo, { label: input, done: false }]);
+			fetch(toDoListUrl, {
+				method: "PUT",
+				body: JSON.stringify(todo),
+				headers: {
+					"Content-Type": "application/json"
+				}
 			})
-			.then(json => {
-				setTodo(json.label);
+				.then(resp => {
+					return resp.json();
+				})
+				.then(data => {
+					console.log(data);
+				})
+				.catch(error => {
+					console.log(error);
+				});
+
+			console.log(todo);
+		}
+	}
+
+	function deleteTodo(elementIndex) {
+		var filtered = todo.filter(function(value, i) {
+			return elementIndex !== i;
+		});
+		setTodo(filtered);
+		fetch(toDoListUrl, {
+			method: "PUT",
+			body: JSON.stringify(filtered),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		})
+			.then(resp => {
+				return resp.json();
+			})
+			.then(data => {
+				console.log(data);
+			})
+			.catch(error => {
+				console.log(error);
+			});
+
+		console.log(filtered);
+	}
+	useEffect(() => {
+		fetch(toDoListUrl)
+			.then(response => response.json())
+			.then(responseJSON => {
+				setTodo(responseJSON);
+				console.log(responseJSON);
 			});
 	}, []);
-	// fetch(endpoint).then(function(response) {
-	// 	return response.json()
-	// }).then(function(json) {
-	//     json.forEach((value) => {
-	//         console.log(value)
-	//     })
-	// });
-	// let requestOptions = {
-	//     method: 'GET',
-	//     redirect: 'follow'
-	//     };
-	//     fetch("https://assets.breatheco.de/apis/fake/todos/user/tibisfly2", requestOptions)
-	//     .then(response => response.text())
-	//     .then(result => console.log(result))
-	//     .catch(error => console.log('error', error));
+
+	useEffect(
+		() => {
+			fetch(toDoListUrl, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(todo)
+			})
+				.then(response => response.json())
+				.then(data => {
+					console.log("Success:", data);
+				})
+				.catch(error => {
+					console.error("Error:", error);
+				});
+		},
+		[todo]
+	);
 
 	return (
 		<div className="text-center mt-5">
@@ -71,29 +123,28 @@ export function Home() {
 
 					<div className="input container input-group mx-auto">
 						<input
-							onChange={handleChange}
-							onKeyPress={handleKeyPress}
-							value={inputValue}
-							placeholder="What needs to be done?"
 							type="text"
-							className="form-control"
+							onKeyPress={e => {
+								addTodo(e);
+							}}
 						/>
 					</div>
 					<div className="list container">
 						<ul>
 							{todo.map((value, index) => (
 								<li className="list-group-item" key={index}>
-									{value}
+									{todo}
 									<button
 										type="button"
-										onClick={event =>
-											deleteRow(index, event)
-										}>
+										onClick={event => deleteTodo(index)}>
 										<i className="fas fa-trash-alt" />
 									</button>
 								</li>
 							))}
 						</ul>
+						<div className="text-muted pb-1">
+							<p>{todo.length} to do</p>
+						</div>
 					</div>
 				</div>
 			</div>
