@@ -39,11 +39,15 @@ export function Home() {
 
 	function addTodo(e) {
 		let input = document.querySelector("input").value;
-		if (e.key === "Enter") {
-			setTodo(todo => [...todo, { label: input, done: false }]);
+		console.log(input);
+		if (e.key === "Enter" && input != "") {
+			let newTodos = [...todo, { label: input, done: false }];
+			setTodo(newTodos);
+			document.querySelector("input").value = "";
+			console.log(todo);
 			fetch(toDoListUrl, {
 				method: "PUT",
-				body: JSON.stringify(todo),
+				body: JSON.stringify(newTodos),
 				headers: {
 					"Content-Type": "application/json"
 				}
@@ -86,34 +90,19 @@ export function Home() {
 
 		console.log(filtered);
 	}
-	useEffect(() => {
-		fetch(toDoListUrl)
+
+	function getTodos() {
+		fetch(toDoListUrl, { method: "GET" })
 			.then(response => response.json())
 			.then(responseJSON => {
 				setTodo(responseJSON);
 				console.log(responseJSON);
 			});
-	}, []);
+	}
 
-	useEffect(
-		() => {
-			fetch(toDoListUrl, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify(todo)
-			})
-				.then(response => response.json())
-				.then(data => {
-					console.log("Success:", data);
-				})
-				.catch(error => {
-					console.error("Error:", error);
-				});
-		},
-		[todo]
-	);
+	useEffect(() => {
+		getTodos();
+	}, []);
 
 	return (
 		<div className="text-center mt-5">
@@ -133,7 +122,7 @@ export function Home() {
 						<ul>
 							{todo.map((value, index) => (
 								<li className="list-group-item" key={index}>
-									{todo}
+									{value.label}
 									<button
 										type="button"
 										onClick={event => deleteTodo(index)}>
